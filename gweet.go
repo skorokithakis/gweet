@@ -12,8 +12,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const MaxQueueLength = 3
-const ItemLifetime = 3 * time.Second
+const MaxQueueLength = 100
+const ItemLifetime = 5 * 24 * time.Hour
 
 func main() {
 	var debug_enabled = flag.Bool("debug", false, "Enable debug logging")
