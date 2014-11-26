@@ -23,6 +23,7 @@ func StreamsGetHandler(w http.ResponseWriter, r *http.Request) {
 		value = make([]url.Values, 0)
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, JSONResponse{"messages": value})
 }
 func StreamsPostHandler(w http.ResponseWriter, r *http.Request) {
@@ -41,5 +42,6 @@ func StreamsPostHandler(w http.ResponseWriter, r *http.Request) {
 		messages = messages[1:len(messages)]
 	}
 	c.Set(vars["key"], messages, 0)
+	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, JSONResponse{"status": "success"})
 }
