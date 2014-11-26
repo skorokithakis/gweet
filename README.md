@@ -23,4 +23,7 @@ To use Gweet, all you need to do is POST a few values to your server, to the `/s
 whatever you want, but a UUID is recommended, to avoid conflicts. The values can either be in the query string or in
 the POST body, encoded as a form.
 
-To read the last posted values, just GET `/stream/{key}/`. Simple as that.
+To read the last posted values, just GET `/stream/{key}/`. You can return only the `N` latest values with a GET to
+`/stream/{key}/?latest=N`.
+
+Simple as that.
