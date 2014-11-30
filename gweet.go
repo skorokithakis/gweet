@@ -31,6 +31,7 @@ func main() {
 	r.HandleFunc("/stream/{key}/", StreamsGetHandler).Methods("GET")
 	r.HandleFunc("/stream/{key}/", StreamsPostHandler).Methods("POST")
 
+	go Cacher()
 	INFO.Println("Listening on " + *intf + ":" + strconv.Itoa(*port))
 	log.Fatal(http.ListenAndServe(*intf+":"+strconv.Itoa(*port), Log(r)))
 }

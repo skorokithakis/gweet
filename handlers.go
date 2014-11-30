@@ -27,42 +27,33 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func StreamsGetHandler(w http.ResponseWriter, r *http.Request) {
-	var messages []interface{}
 	vars := mux.Vars(r)
-	value, found := c.Get(vars["key"])
-	if !found {
-		messages = make([]interface{}, 0)
-	} else {
-		messages = value.([]interface{})
-	}
 
 	latest, err := strconv.Atoi(r.FormValue("latest"))
 	if err != nil || latest <= 0 || latest >= MaxQueueLength {
 		latest = MaxQueueLength
 	}
 
+	// Get the messages from the cache.
+	backchan := make(chan []interface{}, 1)
+	CacheBus <- CacheMessage{0, backchan, vars["key"]}
+	messages := <-backchan
+
 	w.Header().Set("Content-Type", "application/json")
 	lowerBound := int(math.Max(0, float64(len(messages)-latest)))
 	upperBound := len(messages)
 	fmt.Fprint(w, JSONResponse{"messages": messages[lowerBound:upperBound]})
 }
+
 func StreamsPostHandler(w http.ResponseWriter, r *http.Request) {
-	var messages []interface{}
 	vars := mux.Vars(r)
-	value, found := c.Get(vars["key"])
-	if !found {
-		messages = make([]interface{}, 0)
-	} else {
-		messages = value.([]interface{})
-	}
+
 	r.ParseForm()
 	message := makeMessage(vars["key"], &r.Form)
-	messages = append(messages, message)
 
-	if len(messages) > MaxQueueLength {
-		messages = messages[1:len(messages)]
-	}
-	c.Set(vars["key"], messages, 0)
+	// Write the message to the cache.
+	CacheBus <- CacheMessage{1, message, vars["key"]}
+
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, JSONResponse{"status": "success", "message": message})
 }
