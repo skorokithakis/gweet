@@ -40,8 +40,7 @@ func StreamsStreamingGetHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Don't forget to close the connection:
 	defer conn.Close()
-	defer bufrw.Flush()
-	defer bufrw.WriteString(Chunk(""))
+	defer conn.Write(Chunk(""))
 
 	fmt.Fprintf(bufrw, "HTTP/1.1 200 OK\r\n")
 	fmt.Fprintf(bufrw, "Transfer-Encoding: chunked\r\n")
@@ -62,13 +61,12 @@ func StreamsStreamingGetHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			assertedMessage := message.(map[string]interface{})
-			_, err = bufrw.WriteString(Chunk(JSONToString(assertedMessage) + "\n"))
+			_, err = conn.Write(Chunk(JSONToString(assertedMessage) + "\n"))
 		case _ = <-ticker:
 			// Send the keepalive.
-			_, err = bufrw.WriteString(Chunk("\n"))
+			_, err = conn.Write(Chunk("\n"))
 		}
 
-		bufrw.Flush()
 		// An error means the connection was closed, return.
 		if err != nil {
 			return

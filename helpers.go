@@ -62,6 +62,6 @@ func Log(handler http.Handler) http.Handler {
 }
 
 // A chunked response helper.
-func Chunk(s string) string {
-	return fmt.Sprintf("%x\r\n%v\r\n", len(s), s)
+func Chunk(s string) []byte {
+	return []byte(fmt.Sprintf("%x\r\n%v\r\n", len(s), s))
 }
