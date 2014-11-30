@@ -28,6 +28,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", HomeHandler)
+	r.HandleFunc("/stream/{key}/", StreamsStreamingGetHandler).Methods("GET").Queries("streaming", "1")
 	r.HandleFunc("/stream/{key}/", StreamsGetHandler).Methods("GET")
 	r.HandleFunc("/stream/{key}/", StreamsPostHandler).Methods("POST")
 
