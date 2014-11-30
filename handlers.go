@@ -52,10 +52,27 @@ func StreamsStreamingGetHandler(w http.ResponseWriter, r *http.Request) {
 	messageBus := TopicMap.Register(key)
 	defer TopicMap.Unregister(key, messageBus)
 
-	for message := range messageBus {
-		assertedMessage := message.(map[string]interface{})
-		bufrw.WriteString(Chunk(JSONToString(assertedMessage) + "\n"))
+	// Keepalive ticker
+	ticker := time.Tick(30 * time.Second)
+	for {
+		var err error
+		select {
+		case message, ok := <-messageBus:
+			if !ok {
+				return
+			}
+			assertedMessage := message.(map[string]interface{})
+			_, err = bufrw.WriteString(Chunk(JSONToString(assertedMessage) + "\n"))
+		case _ = <-ticker:
+			// Send the keepalive.
+			_, err = bufrw.WriteString(Chunk("\n"))
+		}
+
 		bufrw.Flush()
+		// An error means the connection was closed, return.
+		if err != nil {
+			return
+		}
 	}
 }
 
