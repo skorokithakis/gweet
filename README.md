@@ -37,6 +37,6 @@ Demo
 
 If you want to play around with Gweet a bit, there's a hosted demo at:
 
-http://gweetapp.appspot.com/
+https://queue.stavros.io/
 
 Feel free to use it, within reason. No guarantees for persistence or continued service.
