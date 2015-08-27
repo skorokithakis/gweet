@@ -1,7 +1,9 @@
 Gweet
 =====
 Gweet is a ridiculously simple message queue for use with internet-connected devices. Post and read messages to
-arbitrary keys with ease.
+arbitrary keys with ease. You can find more information about it on my blog:
+
+http://www.stavros.io/posts/messaging-for-your-things/
 
 
 Installation
