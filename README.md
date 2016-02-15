@@ -17,6 +17,8 @@ go build github.com/skorokithakis/gweet
 
 and copy the resulting `gweet` binary somewhere, anywhere. You're ready, just run it and your server is operational.
 
+You can also download a pre-built binary from the Github releases page.
+
 
 Usage
 -----
