@@ -47,6 +47,8 @@ The API endpoints are:
 * To allow clients to submit a value to a channel without being able to *read*
   from that channel, i.e. to a push-only channel, calculate the SHA2-256 of the
   key and give that to the client. The client can then POST to `/push/{sha2}/`.
+  For example, to publish to the channel `/stream/hello/`, a client can POST to
+  `/push/2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824`.
 
 Simple as that.
 
