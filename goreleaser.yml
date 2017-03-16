@@ -1,7 +1,7 @@
 # goreleaser.yml
 # Build customization
 build:
-  binary_name: drum-roll
+  binary_name: gweet
   goos:
     - windows
     - darwin
