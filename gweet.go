@@ -31,6 +31,7 @@ func main() {
 	r.HandleFunc("/stream/{key}/", StreamsStreamingGetHandler).Methods("GET").Queries("streaming", "1")
 	r.HandleFunc("/stream/{key}/", StreamsGetHandler).Methods("GET")
 	r.HandleFunc("/stream/{key}/", StreamsPostHandler).Methods("POST")
+	r.HandleFunc("/push/{key}/", PushHandler).Methods("POST")
 
 	go Cacher()
 	INFO.Println("Listening on " + *intf + ":" + strconv.Itoa(*port))
