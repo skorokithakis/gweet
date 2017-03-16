@@ -8,3 +8,4 @@ build:
     - linux
   goarch:
     - amd64
+    - 386
