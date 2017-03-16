@@ -105,10 +105,11 @@ func StreamsGetHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func StreamsPostHandler(w http.ResponseWriter, r *http.Request) {
-	key := hashKey(mux.Vars(r)["key"])
+	key := mux.Vars(r)["key"]
 
 	r.ParseForm()
 	message := makeMessage(key, &r.Form)
+    key = hashKey(key)
 
 	// Write the message to the cache.
 	CacheBus <- CacheMessage{1, message, key}
