@@ -1,7 +1,7 @@
 # goreleaser.yml
 # Build customization
 build:
-  binary_name: gweet
+  binary: gweet
   goos:
     - windows
     - darwin
