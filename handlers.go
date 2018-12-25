@@ -32,7 +32,7 @@ func hashKey(key string) string {
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Please read the documentation on how to talk to this server.")
+	fmt.Fprint(w, "This is a <a href='https://github.com/skorokithakis/gweet/'>Gweet server</a>. Please read the documentation on how to talk to it.")
 }
 
 func StreamsStreamingGetHandler(w http.ResponseWriter, r *http.Request) {
