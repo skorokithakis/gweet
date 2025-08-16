@@ -115,7 +115,7 @@ func StreamsPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
 	message := makeMessage(key, &r.Form)
-    key = hashKey(key)
+	key = hashKey(key)
 
 	// Write the message to the cache.
 	CacheBus <- CacheMessage{1, message, key}
