@@ -14,20 +14,22 @@ type TopicMapEntry struct {
 
 type TopicMapStruct struct {
 	sync.RWMutex
-	m map[string]TopicMapEntry
+	m map[string]*TopicMapEntry
 }
 
 func (tms *TopicMapStruct) Register(key string) chan interface{} {
 	tms.Lock()
 	t, ok := tms.m[key]
 	if !ok {
-		t = TopicMapEntry{topic.New(), 0}
+		t = &TopicMapEntry{topic.New(), 0}
 		tms.m[key] = t
 	}
 	t.count++
 	tms.Unlock()
 
-	ch := make(chan interface{})
+	// Create a buffered channel to prevent immediate drops by the topic library.
+	// The topic library drops consumers if they can't receive messages immediately.
+	ch := make(chan interface{}, 100)
 	t.t.Register(ch)
 	return ch
 }
@@ -47,4 +49,4 @@ func (tms *TopicMapStruct) Unregister(key string, ch chan<- interface{}) {
 	}
 }
 
-var TopicMap = TopicMapStruct{m: make(map[string]TopicMapEntry)}
+var TopicMap = TopicMapStruct{m: make(map[string]*TopicMapEntry)}
