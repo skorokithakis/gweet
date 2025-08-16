@@ -70,10 +70,16 @@ func StreamsStreamingGetHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			assertedMessage := message.(map[string]interface{})
-			_, err = conn.Write(Chunk(JSONToString(assertedMessage) + "\n"))
+			_, err = bufrw.Write(Chunk(JSONToString(assertedMessage) + "\n"))
+			if err == nil {
+				err = bufrw.Flush()
+			}
 		case _ = <-ticker:
 			// Send the keepalive.
-			_, err = conn.Write(Chunk("\n"))
+			_, err = bufrw.Write(Chunk("\n"))
+			if err == nil {
+				err = bufrw.Flush()
+			}
 		}
 
 		// An error means the connection was closed, return.
