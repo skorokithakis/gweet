@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -23,7 +23,7 @@ func main() {
 	if *debug_enabled {
 		InitLogging(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
 	} else {
-		InitLogging(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
+		InitLogging(io.Discard, os.Stdout, os.Stdout, os.Stderr)
 	}
 
 	r := mux.NewRouter()

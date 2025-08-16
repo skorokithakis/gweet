@@ -25,3 +25,4 @@ gweet
 *.test
 *.prof
 .goxc.local.json
+.claude/
