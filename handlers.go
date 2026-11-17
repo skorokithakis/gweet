@@ -60,6 +60,19 @@ func StreamsStreamingGetHandler(w http.ResponseWriter, r *http.Request) {
 	messageBus := TopicMap.Register(key)
 	defer TopicMap.Unregister(key, messageBus)
 
+	// Send one keepalive at once, after the subscription is registered. Some
+	// clients (Firefox fetch, for example) do not report the response as open
+	// until the first body byte arrives, so without this they would wait up to
+	// 30 seconds for the first ticker keepalive. It also tells clients that the
+	// subscription is live.
+	_, err = bufrw.Write(Chunk("\n"))
+	if err == nil {
+		err = bufrw.Flush()
+	}
+	if err != nil {
+		return
+	}
+
 	// Keepalive ticker
 	ticker := time.Tick(30 * time.Second)
 	for {

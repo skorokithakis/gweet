@@ -809,3 +809,48 @@ func TestChunkFunction(t *testing.T) {
 		}
 	}
 }
+
+// TestStreamingSendsKeepaliveAtOnce tests that the stream sends a keepalive
+// right after it opens, without waiting for the 30-second ticker.
+func TestStreamingSendsKeepaliveAtOnce(t *testing.T) {
+	initTestEnvironment()
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		router := mux.NewRouter()
+		router.HandleFunc("/stream/{key}/", StreamsStreamingGetHandler).Methods("GET")
+		router.ServeHTTP(w, r)
+	}))
+	defer server.Close()
+
+	serverURL := strings.TrimPrefix(server.URL, "http://")
+	conn, err := net.Dial("tcp", serverURL)
+	if err != nil {
+		t.Fatalf("Failed to connect to test server: %v", err)
+	}
+	defer conn.Close()
+
+	request := fmt.Sprintf("GET /stream/initial_keepalive_key/?streaming=1 HTTP/1.1\r\nHost: %s\r\n\r\n", serverURL)
+	if _, err := conn.Write([]byte(request)); err != nil {
+		t.Fatalf("Failed to send request: %v", err)
+	}
+
+	conn.SetReadDeadline(time.Now().Add(2 * time.Second))
+	reader := bufio.NewReader(conn)
+	for {
+		header, err := reader.ReadString('\n')
+		if err != nil {
+			t.Fatalf("Failed to read header: %v", err)
+		}
+		if header == "\r\n" {
+			break
+		}
+	}
+
+	expected := string(Chunk("\n"))
+	got := make([]byte, len(expected))
+	if _, err := io.ReadFull(reader, got); err != nil {
+		t.Fatalf("Failed to read the initial keepalive: %v", err)
+	}
+	if string(got) != expected {
+		t.Errorf("Expected initial keepalive chunk %q, got %q", expected, string(got))
+	}
+}
